@@ -18,7 +18,7 @@ def main():
     message = data['message']['text']
 
     json_data = {
-        "chat_id": chat_id,
+        "chat_id": 483091603,
         "text": message,
     }
 
