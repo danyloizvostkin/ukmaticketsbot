@@ -65,8 +65,14 @@ def handle():
     input_data = request.json
     print(input_data)  # heroku logs
 
-    chat_id = input_data['message']['from']['id']
-    firstname = input_data['message']['from']['first_name']
+    if 'message' in input_data:
+        chat_id = input_data['message']['from']['id']
+        firstname = input_data['message']['from']['first_name']
+
+    if 'callback_query' in input_data:
+        chat_id = input_data['callback_query']['from']['id']
+        firstname = input_data['message']['from']['first_name']
+
     message = ''
     try:
         message = input_data['message']['text'] # TODO check if text exist
