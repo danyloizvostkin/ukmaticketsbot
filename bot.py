@@ -71,7 +71,8 @@ def handle():
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
-        firstname = input_data['callback_query']['from']['first_name']
+        callback = input_data['data']
+        callback_handler(chat_id, callback)
 
     message = ''
     try:
@@ -94,8 +95,17 @@ def handle():
     return ''
 
 
-def callback_handler(chat_id,callback):
-    pass
+def callback_handler(chat_id, callback):
+    if callback == 'button1':
+        send_message_to_user(chat_id, "Ты выбрал кнопку 1")
+    elif callback == 'button2':
+        send_message_to_user(chat_id, "Ты выбрал кнопку 2")
+    elif callback == 'button3':
+        send_message_to_user(chat_id, "Ты выбрал кнопку 3")
+    elif callback == 'button4':
+        send_message_to_user(chat_id, "Ты выбрал кнопку 4")
+    elif callback == 'button5':
+        send_message_to_user(chat_id, "Ты выбрал кнопку 5")
 
 
 def send_message_to_user(chat_id, message):
