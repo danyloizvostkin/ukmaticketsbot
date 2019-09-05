@@ -71,7 +71,7 @@ def handle():
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
-        firstname = input_data['message']['from']['first_name']
+        firstname = input_data['callback_query']['from']['first_name']
 
     message = ''
     try:
