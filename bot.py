@@ -63,7 +63,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-
 class User(db.Model):
     chat_id = db.Column(db.Integer, primary_key=True)
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
@@ -74,6 +73,7 @@ class User(db.Model):
 
 
 db.create_all()
+
 
 @app.route('/', methods=['POST'])
 def handle():
@@ -105,9 +105,16 @@ def handle():
             except:
                 print("init user data error")
         else:
-            send_message_to_admin(message)
-            send_message_to_user(chat_id, message)
+            if user_state(chat_id) == 1:
+                username = input_data['message']['from']['username']
+                send_message_to_admin(message="%s %s" % (username, message))
+                send_message_to_user(chat_id=chat_id,message="Дякую! Проїздний буде готовий приблизно 28 вересня")
+                update_user_state(chat_id, 0)
+            else:
+                send_message_with_keyboard(chat_id, "Вибачте, бот Вас не розуміє :(\nНатисніть на один із запропонованих варіантів нижче", greetings_keyboard)
+
     return ''
+
 
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
@@ -115,16 +122,9 @@ def callback_handler(chat_id, callback):
                                    message="Чудово, твій вибір: проїздний %s\nЗдійсни оплату на картку Приватбанк - 123456789012 Ізв Д.О. та натисни кнопку \"Уже оплатив!\"" % callback_texts[callback],
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
-    if callback == 'button1':
-        send_message_to_user(chat_id, "Ты выбрал кнопку 1")
-    elif callback == 'button2':
-        send_message_to_user(chat_id, "Ты выбрал кнопку 2")
-    elif callback == 'button3':
-        send_message_to_user(chat_id, "Ты выбрал кнопку 3")
-    elif callback == 'button4':
-        send_message_to_user(chat_id, "Ты выбрал кнопку 4")
-    elif callback == 'button5':
-        send_message_to_user(chat_id, "Ты выбрал кнопку 5")
+    elif callback == "payment_done":
+        update_user_state(chat_id, 1)
+        send_message_to_user(chat_id=chat_id, message="Введіть час здійснення переказу коштів:")
 
 
 def send_message_to_user(chat_id, message):
@@ -151,14 +151,18 @@ def send_message_to_admin(message):
     send_message_to_user(ADMIN_CHAT_ID, message)
 
 
-def update_user_state(chart_id, new_state):
-    user = User.query.filter_by(chart_id=chart_id).first()
+def update_user_state(chat_id, new_state):
+    user = User.query.filter_by(chat_id=chat_id).first()
     user.chat_state = new_state
     db.session.commit()
 
 
-def set_user_bilet_type(chart_id, bilet_type):
-    user = User.query.filter_by(chart_id=chart_id).first()
+def user_state(chat_id):
+    return User.query.filter_by(chat_id=chat_id).first().chat_state
+
+
+def set_user_bilet_type(chat_id, bilet_type):
+    user = User.query.filter_by(chat_id=chat_id).first()
     user.bilet_type = bilet_type
     db.session.commit()
 
