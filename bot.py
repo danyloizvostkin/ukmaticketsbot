@@ -107,8 +107,8 @@ def handle():
         else:
             if user_state(chat_id) == 1:
                 username = input_data['message']['from']['username']
-                save_purchase_time(chat_id,message)
-                send_message_to_admin(message="%s %s" % (username, "@%s" % message))
+                save_purchase_time(chat_id, message)
+                send_message_to_admin(message="%s %s" % ("@%s" % username, message))
                 send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
                 update_user_state(chat_id, 0)
             else:
