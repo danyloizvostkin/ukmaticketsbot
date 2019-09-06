@@ -10,29 +10,44 @@ BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 # business logic const
 ADMIN_CHAT_ID = os.environ["ADMIN_CHAT_ID"]
 MESSAGE_URL = BOT_URL + 'sendMessage'
+
+callback_texts = {
+    'button1': "Автобус - 195 грн",
+    'button2': "Трамвай - 195 грн",
+    'button3': "Фунікулер - 195 грн",
+    'button4': "Тролейбус - 195 грн",
+    'button5': "Метрополітен - 305 грн",
+}
+
 greetings_keyboard = [
     [{
-        "text": "temp1 - 100 грн",
+        "text": callback_texts["button1"],
         "callback_data": "button1"
     }],
     [{
-        "text": "temp2 - 200 грн",
+        "text": callback_texts["button2"],
         "callback_data": "button2"
     }],
     [{
-        "text": "temp3 - 300 грн",
+        "text": callback_texts["button3"],
         "callback_data": "button3"
     }],
     [{
-        "text": "temp4 - 400 грн",
+        "text": callback_texts["button4"],
         "callback_data": "button4"
     }],
     [{
-        "text": "temp5 - 500 грн",
+        "text": callback_texts["button5"],
         "callback_data": "button5"
     }]
 ]
 
+payment_keyboard = [
+    [{
+        "text": "Уже оплатив",
+        "callback_data": "payment_done"
+    }]
+]
 
 # db configs
 POSTGRES_URL = os.environ["POSTGRES_URL"]
@@ -94,8 +109,12 @@ def handle():
             send_message_to_user(chat_id, message)
     return ''
 
-
 def callback_handler(chat_id, callback):
+    if callback in callback_texts:
+        send_message_with_keyboard(chat_id=chat_id,
+                                   message="Чудово, твій вибір: проїздний %s\nЗдійсни оплату на картку Приватбанк - 123456789012 Ізв Д.О. та натисни кнопку \"Уже оплатив!\"" % callback_texts[callback],
+                                   keyboard=payment_keyboard)
+        set_user_bilet_type(chat_id, callback_texts[callback])
     if callback == 'button1':
         send_message_to_user(chat_id, "Ты выбрал кнопку 1")
     elif callback == 'button2':
