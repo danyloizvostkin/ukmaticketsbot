@@ -107,8 +107,9 @@ def handle():
         else:
             if user_state(chat_id) == 1:
                 username = input_data['message']['from']['username']
-                send_message_to_admin(message="%s %s" % (username, message))
-                send_message_to_user(chat_id=chat_id,message="Дякую! Проїздний буде готовий приблизно 28 вересня")
+                save_purchase_time(chat_id,message)
+                send_message_to_admin(message="%s %s" % (username, "@%s" % message))
+                send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
                 update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id, "Вибачте, бот Вас не розуміє :(\nНатисніть на один із запропонованих варіантів нижче", greetings_keyboard)
@@ -160,6 +161,11 @@ def update_user_state(chat_id, new_state):
 def user_state(chat_id):
     return User.query.filter_by(chat_id=chat_id).first().chat_state
 
+
+def save_purchase_time(chat_id, time):
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.purchase_time = time
+    db.session.commit()
 
 def set_user_bilet_type(chat_id, bilet_type):
     user = User.query.filter_by(chat_id=chat_id).first()
