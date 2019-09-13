@@ -136,7 +136,7 @@ def handle():
     if message != '':
         if message == '/start':
             send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїздного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
-            set_user_username(chat_id, username)
+
             user = User(chat_id=chat_id, chat_state=0)
 
             try:
@@ -147,6 +147,7 @@ def handle():
         else:
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
+                set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
                 send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
                 update_user_state(chat_id, 0)
