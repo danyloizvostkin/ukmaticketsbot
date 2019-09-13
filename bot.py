@@ -119,10 +119,12 @@ def handle():
     if 'message' in input_data:
         chat_id = input_data['message']['from']['id']
         firstname = input_data['message']['from']['first_name']
+        nickname = input_data['message']['from']['username']
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
         callback = input_data['callback_query']['data']
+        nickname = input_data['callback_query']['from']['username']
         callback_handler(chat_id, callback)
 
     message = ''
@@ -134,7 +136,9 @@ def handle():
     if message != '':
         if message == '/start':
             send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїздного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
+            set_user_nickname(chat_id, nickname)
             user = User(chat_id=chat_id, chat_state=0)
+
             try:
                 db.session.add(user)
                 db.session.commit()
@@ -144,7 +148,6 @@ def handle():
             if user_state(chat_id) == 1:
                 username = input_data['message']['from']['username']
                 save_purchase_time(chat_id, message)
-                set_user_nickname(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
                 send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
                 update_user_state(chat_id, 0)
@@ -210,7 +213,9 @@ def set_user_bilet_type(chat_id, bilet_type):
     db.session.commit()
 
 def set_user_nickname(chat_id, nickname):
-    return User.query.filter_by(chat_id=chat_id).first().nickname
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.nickname = nickname
+    db.session.commit()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
