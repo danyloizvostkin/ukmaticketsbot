@@ -119,10 +119,12 @@ def handle():
     if 'message' in input_data:
         chat_id = input_data['message']['from']['id']
         firstname = input_data['message']['from']['first_name']
+        username = input_data['message']['from']['username']
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
         callback = input_data['callback_query']['data']
+        username = input_data['callback_query']['from']['username']
         callback_handler(chat_id, callback)
 
     message = ''
@@ -135,7 +137,6 @@ def handle():
         if message == '/start':
             send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїздного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
             user = User(chat_id=chat_id, chat_state=0)
-            username = input_data['callback_query']['from']['username']
             set_username(chat_id, username)
             try:
                 db.session.add(user)
