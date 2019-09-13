@@ -103,7 +103,7 @@ class User(db.Model):
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
     name = db.Column(db.String(200), unique=False, nullable=True)
     surname = db.Column(db.String(200), unique=False, nullable=True)
-    nickname = db.Column(db.String(200), unique=False, nullable=True)
+    username = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
     purchase_time = db.Column(db.String(200), unique=False, nullable=True)
 
@@ -142,8 +142,8 @@ def handle():
                 print("init user data error")
         else:
             if user_state(chat_id) == 1:
-                username = input_data['message']['from']['username']
-                set_user_nickname(chat_id, username)
+                username = input_data['callback_query']['from']['username']
+                set_username(chat_id, username)
                 save_purchase_time(chat_id, message)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
                 send_message_to_user(chat_id=chat_id, message="Дякую! Тобі прийде повідомлення коли я (@olympiadnik) підтверджу оплату")
@@ -209,9 +209,9 @@ def set_user_bilet_type(chat_id, bilet_type):
     user.bilet_type = bilet_type
     db.session.commit()
 
-def set_user_nickname(chat_id, nickname):
+def set_username(chat_id, username):
     user = User.query.filter_by(chat_id=chat_id).first()
-    user.nickname = nickname
+    user.username = username
     db.session.commit()
 
 
