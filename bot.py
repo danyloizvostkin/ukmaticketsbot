@@ -149,7 +149,7 @@ def handle():
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
-                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія, тому проїзних не чекай. Да й взагалі ти мене обманув(-ла) з оплатою :(")
+                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія, тому проїзних не чекай (хе-хе). Та й взагалі ти мене обманув(-ла) з оплатою :(")
                 update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id, "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче", greetings_keyboard)
