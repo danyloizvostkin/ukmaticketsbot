@@ -5,18 +5,25 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
 
-BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
+BOT_URL = 'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 
 # business logic const
 ADMIN_CHAT_ID = os.environ["ADMIN_CHAT_ID"]
 MESSAGE_URL = BOT_URL + 'sendMessage'
 
 callback_texts = {
-    'button1': "Автобус - 195 грн",
-    'button2': "Трамвай - 195 грн",
-    'button3': "Фунікулер - 195 грн",
-    'button4': "Тролейбус - 195 грн",
-    'button5': "Метрополітен - 305 грн",
+    'button1': "Метро (46 поїздок) - 148 грн.",
+    'button2': "Метро - Автобус (46 поїздок) - 289 грн.",
+    'button3': "Метро - Тролейбус (46 поїздок) - 289 грн.",
+    'button4': "Метро - Трамвай (46 поїздок) - 289 грн.",
+    'button5': "Метро 62 поїздок) - 199 грн.",
+    'button6': "Метро - Автобус (62 поїздки) - 340 грн.",
+    'button7': "Метро - Тролейбус (62 поїздки) - 340 грн.",
+    'button8': "Метро - Трамвай (62 поїздки) - 340 грн.",
+    'button9': "Метро (Безліміт) - 309 грн.",
+    'button10': "Метро - Автобус (Безліміт) - 436 грн.",
+    'button11': "Метро - Тролейбус (Безліміт) - 436 грн.",
+    'button12': "Метро - Трамвай (Безліміт) - 436 грн.",
 }
 
 greetings_keyboard = [
@@ -39,6 +46,34 @@ greetings_keyboard = [
     [{
         "text": callback_texts["button5"],
         "callback_data": "button5"
+    }],
+    [{
+        "text": callback_texts["button6"],
+        "callback_data": "button6"
+    }],
+    [{
+        "text": callback_texts["button7"],
+        "callback_data": "button7"
+    }],
+    [{
+        "text": callback_texts["button8"],
+        "callback_data": "button8"
+    }],
+    [{
+        "text": callback_texts["button9"],
+        "callback_data": "button9"
+    }],
+    [{
+        "text": callback_texts["button10"],
+        "callback_data": "button10"
+    }],
+    [{
+        "text": callback_texts["button11"],
+        "callback_data": "button11"
+    }],
+    [{
+        "text": callback_texts["button12"],
+        "callback_data": "button12"
     }]
 ]
 
@@ -68,6 +103,7 @@ class User(db.Model):
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
     name = db.Column(db.String(200), unique=False, nullable=True)
     surname = db.Column(db.String(200), unique=False, nullable=True)
+    nickname = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
     purchase_time = db.Column(db.String(200), unique=False, nullable=True)
 
@@ -107,9 +143,10 @@ def handle():
         else:
             if user_state(chat_id) == 1:
                 username = input_data['message']['from']['username']
+                set_user_nickname(chat_id, username)
                 save_purchase_time(chat_id, message)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
-                send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
+                send_message_to_user(chat_id=chat_id, message="Дякую! Тобі прийде повідомлення коли я (@olympiadnik) підтверджу оплату")
                 update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id, "Вибачте, бот Вас не розуміє :(\nНатисніть на один із запропонованих варіантів нижче", greetings_keyboard)
@@ -170,6 +207,11 @@ def save_purchase_time(chat_id, time):
 def set_user_bilet_type(chat_id, bilet_type):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.bilet_type = bilet_type
+    db.session.commit()
+
+def set_user_nickname(chat_id, nickname):
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.nickname = nickname
     db.session.commit()
 
 
