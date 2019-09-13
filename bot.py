@@ -135,7 +135,7 @@ def handle():
 
     if message != '':
         if message == '/start':
-            send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїзного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
+            send_message_with_keyboard(chat_id, "Привіт, %s! Тебе вітає тестова версія бота з закупівлі проїзних:)\nОбери тип проїзного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
 
             user = User(chat_id=chat_id, chat_state=0)
 
