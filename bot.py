@@ -137,7 +137,7 @@ def handle():
         if message == '/start':
             send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїздного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
             user = User(chat_id=chat_id, chat_state=0)
-            set_username(chat_id, username)
+            #set_username(chat_id, username)
             try:
                 db.session.add(user)
                 db.session.commit()
