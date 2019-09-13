@@ -135,7 +135,7 @@ def handle():
 
     if message != '':
         if message == '/start':
-            send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїздного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
+            send_message_with_keyboard(chat_id, "Привіт, %s\nОбери тип проїзного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
 
             user = User(chat_id=chat_id, chat_state=0)
 
@@ -149,7 +149,7 @@ def handle():
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
-                send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
+                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія тому проїзних не чекай. Да й взагалі ти мене обманув(-ла) з оплатою :(")
                 update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id, "Вибачте, бот Вас не розуміє :(\nНатисніть на один із запропонованих варіантів нижче", greetings_keyboard)
@@ -160,7 +160,7 @@ def handle():
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
         send_message_with_keyboard(chat_id=chat_id,
-                                   message="Чудово, твій вибір: проїздний %s\nЗдійсни оплату на картку Приватбанк - 123456789012 Ізв Д.О. та натисни кнопку \"Уже оплатив!\"" % callback_texts[callback],
+                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ІПЗбанк - 1234 5678 9012 Скупий Й.А. та натисни кнопку \"Оплатив(-ла)!\"" % callback_texts[callback],
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
