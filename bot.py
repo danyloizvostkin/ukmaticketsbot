@@ -210,9 +210,7 @@ def set_user_bilet_type(chat_id, bilet_type):
     db.session.commit()
 
 def set_user_nickname(chat_id, nickname):
-    user = User.query.filter_by(chat_id=chat_id).first()
-    user.nickname = nickname
-    db.session.commit()
+    return User.query.filter_by(chat_id=chat_id).first().nickname
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
