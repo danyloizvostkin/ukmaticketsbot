@@ -5,7 +5,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
 
-BOT_URL = 'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
+BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 
 # business logic const
 ADMIN_CHAT_ID = os.environ["ADMIN_CHAT_ID"]
