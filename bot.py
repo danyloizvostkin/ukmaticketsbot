@@ -79,7 +79,7 @@ greetings_keyboard = [
 
 payment_keyboard = [
     [{
-        "text": "Оплатив(-ла)",
+        "text": "Оплатив(-ла)!",
         "callback_data": "payment_done"
     }]
 ]
@@ -149,10 +149,10 @@ def handle():
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
-                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія тому проїзних не чекай. Да й взагалі ти мене обманув(-ла) з оплатою :(")
+                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія, тому проїзних не чекай. Да й взагалі ти мене обманув(-ла) з оплатою :(")
                 update_user_state(chat_id, 0)
             else:
-                send_message_with_keyboard(chat_id, "Вибачте, бот Вас не розуміє :(\nНатисніть на один із запропонованих варіантів нижче", greetings_keyboard)
+                send_message_with_keyboard(chat_id, "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче", greetings_keyboard)
 
     return ''
 
@@ -165,7 +165,7 @@ def callback_handler(chat_id, callback):
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
         update_user_state(chat_id, 1)
-        send_message_to_user(chat_id=chat_id, message="Введіть час здійснення переказу коштів:")
+        send_message_to_user(chat_id=chat_id, message="Введи, будь ласка, час здійснення переказу коштів:")
 
 
 def send_message_to_user(chat_id, message):
