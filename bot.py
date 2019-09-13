@@ -103,7 +103,7 @@ class User(db.Model):
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
     name = db.Column(db.String(200), unique=False, nullable=True)
     surname = db.Column(db.String(200), unique=False, nullable=True)
-    nickname = db.Column(db.String(200), unique=False, nullable=True)
+ #   nickname = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
     purchase_time = db.Column(db.String(200), unique=False, nullable=True)
 
