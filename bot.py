@@ -79,7 +79,7 @@ greetings_keyboard = [
 
 payment_keyboard = [
     [{
-        "text": "Уже оплатив",
+        "text": "Оплатив(-ла)",
         "callback_data": "payment_done"
     }]
 ]
