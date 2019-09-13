@@ -103,6 +103,7 @@ class User(db.Model):
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
     name = db.Column(db.String(200), unique=False, nullable=True)
     surname = db.Column(db.String(200), unique=False, nullable=True)
+    nickname = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
     purchase_time = db.Column(db.String(200), unique=False, nullable=True)
 
@@ -143,6 +144,7 @@ def handle():
             if user_state(chat_id) == 1:
                 username = input_data['message']['from']['username']
                 save_purchase_time(chat_id, message)
+                set_user_nickname(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message))
                 send_message_to_user(chat_id=chat_id, message="Дякую! Проїздний буде готовий приблизно 28 вересня")
                 update_user_state(chat_id, 0)
@@ -207,6 +209,10 @@ def set_user_bilet_type(chat_id, bilet_type):
     user.bilet_type = bilet_type
     db.session.commit()
 
+def set_user_nickname(chat_id, nickname):
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.nickname = nickname
+    db.session.commit()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
