@@ -136,7 +136,7 @@ def handle():
     if message != '':
         if message == '/start':
             send_message_to_user(chat_id=chat_id,
-                                 message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я" % firstname)
+                                 message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
             user = User(chat_id=chat_id, chat_state=2)
 
             try:
@@ -173,7 +173,7 @@ def callback_handler(chat_id, callback):
                              message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк та натисни кнопку \"Оплатив(-ла)!\"" %
                                      callback_texts[callback])
         send_message_with_keyboard(chat_id=chat_id,
-                                   message=- "5169360007048329 Ізв Д.О.",
+                                   message="5169360007048329 Ізв Д.О.",
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
