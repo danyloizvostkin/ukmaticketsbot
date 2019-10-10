@@ -154,6 +154,7 @@ def handle():
                                      message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
             elif user_state(chat_id) == 2:
+                print(message)
                 set_user_fullname(chat_id, message)
                 send_message_with_keyboard(chat_id=chat_id,
                                            message="Обери тип проїзного на жовтень, який тобі потрібен:",
