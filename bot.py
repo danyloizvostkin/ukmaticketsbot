@@ -177,16 +177,22 @@ def handle():
 
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
-        send_message_to_user(chat_id=chat_id,
+        try:
+            set_user_bilet_type(chat_id, callback_texts[callback])
+            send_message_to_user(chat_id=chat_id,
                              message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк та натисни кнопку \"Оплатив(-ла)!\"" %
                                      callback_texts[callback])
-        send_message_with_keyboard(chat_id=chat_id,
+            send_message_with_keyboard(chat_id=chat_id,
                                    message="5169360007048329 Ізв Д.О.",
                                    keyboard=payment_keyboard)
-        set_user_bilet_type(chat_id, callback_texts[callback])
+        except:
+            handle_no_user_in_db(chat_id)
     elif callback == "payment_done":
-        update_user_state(chat_id, 1)
-        send_message_to_user(chat_id=chat_id, message="Введіть, будь ласка, час здійснення переказу коштів:")
+        try:
+            update_user_state(chat_id, 1)
+            send_message_to_user(chat_id=chat_id, message="Введіть, будь ласка, час здійснення переказу коштів:")
+        except:
+            handle_no_user_in_db(chat_id)
 
 
 def send_message_to_user(chat_id, message):
@@ -249,20 +255,21 @@ def save_purchase_time(chat_id, time):
 
 
 def set_user_bilet_type(chat_id, bilet_type):
-    try:
-        user = User.query.filter_by(chat_id=chat_id).first()
-        user.bilet_type = bilet_type
-        db.session.commit()
-    except:
-        try:
-            user = User(chat_id=chat_id, chat_state=2)
-            db.session.add(user)
-            db.session.commit()
-            send_message_to_user(chat_id=chat_id,
-                                 message="Привіт! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: ")
-        except:
-            pass
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.bilet_type = bilet_type
+    db.session.commit()
 
+
+
+def handle_no_user_in_db(chat_id):
+    try:
+        user = User(chat_id=chat_id, chat_state=2)
+        db.session.add(user)
+        db.session.commit()
+        send_message_to_user(chat_id=chat_id,
+                             message="Привіт! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: ")
+    except:
+        pass
 
 def set_user_username(chat_id, username):
     user = User.query.filter_by(chat_id=chat_id).first()
