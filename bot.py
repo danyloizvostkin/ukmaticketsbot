@@ -140,7 +140,7 @@ def handle():
                 db.session.add(user)
                 db.session.commit()
             except:
-                update_user_state(chat_id=chat_id, new_state=2)
+                #update_user_state(chat_id=chat_id, new_state=2)
                 pass
         else:
             if user_state(chat_id) == 1:
