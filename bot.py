@@ -161,7 +161,7 @@ def handle():
                 send_message_with_keyboard(chat_id=chat_id,
                                            message="Обери тип проїзного на жовтень, який тобі потрібен:",
                                            keyboard=greetings_keyboard)
-                update_user_state(chat_id, 1)
+                update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id,
                                            "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче",
