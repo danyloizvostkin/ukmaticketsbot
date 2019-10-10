@@ -104,6 +104,7 @@ class User(db.Model):
     #   name = db.Column(db.String(200), unique=False, nullable=True)
     #   surname = db.Column(db.String(200), unique=False, nullable=True)
     username = db.Column(db.String(200), unique=False, nullable=True)
+    fullname = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
     purchase_time = db.Column(db.String(200), unique=False, nullable=True)
 
@@ -135,9 +136,12 @@ def handle():
 
     if message != '':
         if message == '/start':
-            send_message_with_keyboard(chat_id, "Привіт, %s! Тебе вітає тестова версія бота з закупівлі проїзних:)\nОбери тип проїзного на жовтень, який тобі потрібен:" % firstname, greetings_keyboard)
+            send_message_to_user("Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я")
+            user = User(chat_id=chat_id, chat_state=2)
 
-            user = User(chat_id=chat_id, chat_state=0)
+
+
+
 
             try:
                 db.session.add(user)
@@ -148,9 +152,13 @@ def handle():
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
-                send_message_to_admin(message="%s %s" % ("@%s" % username, message))
-                send_message_to_user(chat_id=chat_id, message="Дякую! Це тестова версія, тому проїзних не чекай (хе-хе). Та й взагалі ти мене обманув(-ла) з оплатою :(\nА поки наді мною ще проводять тести - тримай працюючу форму придбання проїзних 👇🏼\nhttps://forms.gle/GDW8teEumAuL6EWY8\nПоспішай! Замовити можна тільки до 15.09.2019 20:00 !1!11!")
+                send_message_to_admin(message="%s %s" % ("@%s" % username, message,))
+                send_message_to_user(chat_id=chat_id, message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
+            elif user_state(chat_id) == 2:
+                set_user_fullname(chat_id, message)
+                send_message_with_keyboard(chat_id, "Обери тип проїзного на жовтень, який тобі потрібен:" % firstname,greetings_keyboard)
+                update_user_state(chat_id, 1)
             else:
                 send_message_with_keyboard(chat_id, "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче", greetings_keyboard)
 
@@ -160,7 +168,7 @@ def handle():
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
         send_message_with_keyboard(chat_id=chat_id,
-                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ІПЗбанк - 1234 5678 9012 Скупий Й.А. та натисни кнопку \"Оплатив(-ла)!\"" % callback_texts[callback],
+                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк - `5169360007048329` Ізв Д.О. та натисни кнопку \"Оплатив(-ла)!\"" % callback_texts[callback],
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
@@ -215,6 +223,11 @@ def set_user_bilet_type(chat_id, bilet_type):
 def set_user_username(chat_id, username):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.username = username
+    db.session.commit()
+
+def set_user_fullname(chat_id, fullname):
+    user = User.query.filter_by(chat_id=chat_id).first()
+    user.username = fullname
     db.session.commit()
 
 if __name__ == '__main__':
