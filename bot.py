@@ -4,7 +4,6 @@ import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
-
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 
 # business logic const
@@ -89,8 +88,8 @@ POSTGRES_URL = os.environ["POSTGRES_URL"]
 POSTGRES_USER = os.environ["POSTGRES_USER"]
 POSTGRES_PW = os.environ["POSTGRES_PW"]
 POSTGRES_DB = os.environ["POSTGRES_DB"]
-DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=POSTGRES_URL,db=POSTGRES_DB)
-
+DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER, pw=POSTGRES_PW, url=POSTGRES_URL,
+                                                               db=POSTGRES_DB)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
@@ -130,18 +129,15 @@ def handle():
 
     message = ''
     try:
-        message = input_data['message']['text'] # TODO check if text exist
+        message = input_data['message']['text']  # TODO check if text exist
     except:
         pass
 
     if message != '':
         if message == '/start':
-            send_message_to_user(chat_id=chat_id, message="Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я")
+            send_message_to_user(chat_id=chat_id,
+                                 message="Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я" % firstname)
             user = User(chat_id=chat_id, chat_state=2)
-
-
-
-
 
             try:
                 db.session.add(user)
@@ -153,14 +149,19 @@ def handle():
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s" % ("@%s" % username, message,))
-                send_message_to_user(chat_id=chat_id, message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
+                send_message_to_user(chat_id=chat_id,
+                                     message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
             elif user_state(chat_id) == 2:
                 set_user_fullname(chat_id, message)
-                send_message_with_keyboard(chat_id, "Обери тип проїзного на жовтень, який тобі потрібен:" % firstname,greetings_keyboard)
+                send_message_with_keyboard(chat_id=chat_id,
+                                           message="Обери тип проїзного на жовтень, який тобі потрібен:",
+                                           keyboard=greetings_keyboard)
                 update_user_state(chat_id, 1)
             else:
-                send_message_with_keyboard(chat_id, "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче", greetings_keyboard)
+                send_message_with_keyboard(chat_id,
+                                           "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче",
+                                           greetings_keyboard)
 
     return ''
 
@@ -168,7 +169,8 @@ def handle():
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
         send_message_with_keyboard(chat_id=chat_id,
-                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк - `5169360007048329` Ізв Д.О. та натисни кнопку \"Оплатив(-ла)!\"" % callback_texts[callback],
+                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк - `5169360007048329` Ізв Д.О. та натисни кнопку \"Оплатив(-ла)!\"" %
+                                           callback_texts[callback],
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
@@ -196,6 +198,7 @@ def send_message_with_keyboard(chat_id, message, keyboard):
     requests.post(MESSAGE_URL, json=send_data)
     print("keyboard sent")
 
+
 def send_message_to_admin(message):
     send_message_to_user(ADMIN_CHAT_ID, message)
 
@@ -215,20 +218,24 @@ def save_purchase_time(chat_id, time):
     user.purchase_time = time
     db.session.commit()
 
+
 def set_user_bilet_type(chat_id, bilet_type):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.bilet_type = bilet_type
     db.session.commit()
+
 
 def set_user_username(chat_id, username):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.username = username
     db.session.commit()
 
+
 def set_user_fullname(chat_id, fullname):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.username = fullname
     db.session.commit()
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
