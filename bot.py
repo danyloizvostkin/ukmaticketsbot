@@ -137,9 +137,9 @@ def handle():
         if message == '/start':
             send_message_to_user(chat_id=chat_id,
                                  message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
-
+            user = User(chat_id=chat_id, chat_state=2)
             try:
-                user = User(chat_id=chat_id, chat_state=2)
+
                 db.session.add(user)
                 db.session.commit()
             except:
