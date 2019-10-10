@@ -145,7 +145,7 @@ def handle():
                 db.session.add(user)
                 db.session.commit()
             except:
-                #update_user_state(chat_id=chat_id, new_state=2)
+                # update_user_state(chat_id=chat_id, new_state=2)
                 pass
         else:
             if user_state(chat_id) == -1:
@@ -186,7 +186,7 @@ def callback_handler(chat_id, callback):
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
         update_user_state(chat_id, 1)
-        send_message_to_user(chat_id=chat_id, message="Введи, будь ласка, час здійснення переказу коштів:")
+        send_message_to_user(chat_id=chat_id, message="Введіть, будь ласка, час здійснення переказу коштів:")
 
 
 def send_message_to_user(chat_id, message):
@@ -249,9 +249,19 @@ def save_purchase_time(chat_id, time):
 
 
 def set_user_bilet_type(chat_id, bilet_type):
-    user = User.query.filter_by(chat_id=chat_id).first()
-    user.bilet_type = bilet_type
-    db.session.commit()
+    try:
+        user = User.query.filter_by(chat_id=chat_id).first()
+        user.bilet_type = bilet_type
+        db.session.commit()
+    except:
+        try:
+            user = User(chat_id=chat_id, chat_state=2)
+            db.session.add(user)
+            db.session.commit()
+            send_message_to_user(chat_id=chat_id,
+                                 message="Привіт! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: ")
+        except:
+            pass
 
 
 def set_user_username(chat_id, username):
