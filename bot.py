@@ -100,8 +100,6 @@ db = SQLAlchemy(app)
 class User(db.Model):
     chat_id = db.Column(db.Integer, primary_key=True)
     chat_state = db.Column(db.Integer, unique=False, nullable=False)
-    #   name = db.Column(db.String(200), unique=False, nullable=True)
-    #   surname = db.Column(db.String(200), unique=False, nullable=True)
     username = db.Column(db.String(200), unique=False, nullable=True)
     fullname = db.Column(db.String(200), unique=False, nullable=True)
     bilet_type = db.Column(db.String(200), unique=False, nullable=True)
@@ -139,11 +137,11 @@ def handle():
                                  message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
             user = User(chat_id=chat_id, chat_state=2)
             try:
-
                 db.session.add(user)
                 db.session.commit()
             except:
                 update_user_state(chat_id=chat_id, new_state=2)
+                pass
         else:
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
