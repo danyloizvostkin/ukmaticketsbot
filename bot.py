@@ -136,7 +136,7 @@ def handle():
 
     if message != '':
         if message == '/start':
-            send_message_to_user("Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я")
+            send_message_to_user(chat_id=chat_id, message="Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я")
             user = User(chat_id=chat_id, chat_state=2)
 
 
