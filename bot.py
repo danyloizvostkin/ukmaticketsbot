@@ -148,7 +148,10 @@ def handle():
                 #update_user_state(chat_id=chat_id, new_state=2)
                 pass
         else:
-            if user_state(chat_id) == 1:
+            if user_state(chat_id) == -1:
+                send_message_to_user(chat_id=chat_id,
+                                     message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
+            elif user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
                 send_message_to_admin(message="%s %s\n%s %s" % (
@@ -218,7 +221,17 @@ def update_user_state(chat_id, new_state):
 
 
 def user_state(chat_id):
-    return User.query.filter_by(chat_id=chat_id).first().chat_state
+    try:
+        return User.query.filter_by(chat_id=chat_id).first().chat_state
+    except:
+        try:
+            user = User(chat_id=chat_id, chat_state=2)
+            db.session.add(user)
+            db.session.commit()
+
+        except:
+            pass
+    return -1
 
 
 def get_user_bilet_type(chat_id):
