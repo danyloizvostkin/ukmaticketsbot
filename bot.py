@@ -142,8 +142,7 @@ def handle():
                 user = User(chat_id=chat_id, chat_state=2)
                 db.session.add(user)
                 db.session.commit()
-            except SQLAlchemy.exc.SQLAlchemyError:
-                print("init user data error")
+            except:
                 update_user_state(chat_id=chat_id, new_state=2)
         else:
             if user_state(chat_id) == 1:
