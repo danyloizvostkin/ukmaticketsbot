@@ -144,6 +144,7 @@ def handle():
                 db.session.commit()
             except:
                 print("init user data error")
+                update_user_state(chat_id=chat_id, new_state=2)
         else:
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
