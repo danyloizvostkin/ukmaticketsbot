@@ -136,7 +136,7 @@ def handle():
     if message != '':
         if message == '/start':
             send_message_to_user(chat_id=chat_id,
-                                 message="Привіт, %s! Тебе бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я" % firstname)
+                                 message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nНапиши своє прізвище та ім'я" % firstname)
             user = User(chat_id=chat_id, chat_state=2)
 
             try:
@@ -148,7 +148,8 @@ def handle():
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
-                send_message_to_admin(message="%s %s %s %s" % ("@%s" % username, message, get_user_bilet_type(chat_id=chat_id), get_user_fullname(chat_id=chat_id)))
+                send_message_to_admin(message="%s %s\n%s %s" % (
+                "@%s" % username, message, get_user_fullname(chat_id=chat_id), get_user_bilet_type(chat_id=chat_id)))
                 send_message_to_user(chat_id=chat_id,
                                      message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
@@ -168,9 +169,11 @@ def handle():
 
 def callback_handler(chat_id, callback):
     if callback in callback_texts:
+        send_message_to_user(chat_id=chat_id,
+                             message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк та натисни кнопку \"Оплатив(-ла)!\"" %
+                                     callback_texts[callback])
         send_message_with_keyboard(chat_id=chat_id,
-                                   message="Чудово, твій вибір: проїзний %s\nЗдійсни оплату на картку ПриватБанк - `5169360007048329` Ізв Д.О. та натисни кнопку \"Оплатив(-ла)!\"" %
-                                           callback_texts[callback],
+                                   message=- "5169360007048329 Ізв Д.О.",
                                    keyboard=payment_keyboard)
         set_user_bilet_type(chat_id, callback_texts[callback])
     elif callback == "payment_done":
@@ -215,6 +218,7 @@ def user_state(chat_id):
 
 def get_user_bilet_type(chat_id):
     return User.query.filter_by(chat_id=chat_id).first().bilet_type
+
 
 def get_user_fullname(chat_id):
     return User.query.filter_by(chat_id=chat_id).first().fullname
