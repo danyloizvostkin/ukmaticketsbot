@@ -148,7 +148,7 @@ def handle():
             if user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
-                send_message_to_admin(message="%s %s" % ("@%s" % username, message,))
+                send_message_to_admin(message="%s %s %s" % ("@%s" % username, message, get_user_bilet_type(chat_id=chat_id)))
                 send_message_to_user(chat_id=chat_id,
                                      message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
@@ -213,6 +213,10 @@ def user_state(chat_id):
     return User.query.filter_by(chat_id=chat_id).first().chat_state
 
 
+def get_user_bilet_type(chat_id):
+    return User.query.filter_by(chat_id=chat_id).first().bilet_type
+
+
 def save_purchase_time(chat_id, time):
     user = User.query.filter_by(chat_id=chat_id).first()
     user.purchase_time = time
@@ -233,7 +237,7 @@ def set_user_username(chat_id, username):
 
 def set_user_fullname(chat_id, fullname):
     user = User.query.filter_by(chat_id=chat_id).first()
-    user.username = fullname
+    user.fullname = fullname
     db.session.commit()
 
 
