@@ -114,15 +114,19 @@ def handle():
     input_data = request.json
     print(input_data)  # heroku logs
 
+    username = "No User Name"
+
     if 'message' in input_data:
         chat_id = input_data['message']['from']['id']
         firstname = input_data['message']['from']['first_name']
-        username = input_data['message']['from']['username']
+        try:
+            username = input_data['message']['from']['username']
+        except:
+            pass
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
         callback = input_data['callback_query']['data']
-        username = input_data['callback_query']['from']['username']
         callback_handler(chat_id, callback)
 
     message = ''
