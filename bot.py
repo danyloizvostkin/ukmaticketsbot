@@ -114,15 +114,19 @@ def handle():
     input_data = request.json
     print(input_data)  # heroku logs
 
+    username = "No User Name"
+
     if 'message' in input_data:
         chat_id = input_data['message']['from']['id']
         firstname = input_data['message']['from']['first_name']
-        username = input_data['message']['from']['username']
+        try:
+            username = input_data['message']['from']['username']
+        except:
+            pass
 
     if 'callback_query' in input_data:
         chat_id = input_data['callback_query']['from']['id']
         callback = input_data['callback_query']['data']
-        username = input_data['callback_query']['from']['username']
         callback_handler(chat_id, callback)
 
     message = ''
@@ -134,7 +138,7 @@ def handle():
     if message != '':
         if message == '/start':
             send_message_to_user(chat_id=chat_id,
-                                 message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
+                                 message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Грудень 2019\nДедлайн 13 листопада о 23:55\nДля початку, напиши своє прізвище та ім'я: " % firstname)
             try:
                 update_user_state(chat_id=chat_id, new_state=2)
             except:
@@ -145,12 +149,11 @@ def handle():
                 db.session.add(user)
                 db.session.commit()
             except:
-                # update_user_state(chat_id=chat_id, new_state=2)
                 pass
         else:
             if user_state(chat_id) == -1:
                 send_message_to_user(chat_id=chat_id,
-                                     message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: " % firstname)
+                                     message="Привіт, %s! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Грудень 2019\nДедлайн 13 листопада о 23:55\nДля початку, напиши своє прізвище та ім'я: " % firstname)
             elif user_state(chat_id) == 1:
                 save_purchase_time(chat_id, message)
                 set_user_username(chat_id, username)
@@ -161,17 +164,15 @@ def handle():
                                      message="Дякую, твоя відповідь записана! Якщо є якісь питання - пиши в пп @olympiadnik")
                 update_user_state(chat_id, 0)
             elif user_state(chat_id) == 2:
-                print(message)
                 set_user_fullname(chat_id, message)
                 send_message_with_keyboard(chat_id=chat_id,
-                                           message="Обери тип проїзного на жовтень, який тобі потрібен:",
+                                           message="Обери тип проїзного, який тобі потрібен:",
                                            keyboard=greetings_keyboard)
                 update_user_state(chat_id, 0)
             else:
                 send_message_with_keyboard(chat_id,
                                            "Вибач, бот тебе не розуміє :(\nНатисни на один із запропонованих варіантів нижче",
                                            greetings_keyboard)
-
     return ''
 
 
@@ -211,9 +212,7 @@ def send_message_with_keyboard(chat_id, message, keyboard):
             "inline_keyboard": keyboard
         }
     }
-    print(send_data)
     requests.post(MESSAGE_URL, json=send_data)
-    print("keyboard sent")
 
 
 def send_message_to_admin(message):
@@ -234,7 +233,6 @@ def user_state(chat_id):
             user = User(chat_id=chat_id, chat_state=2)
             db.session.add(user)
             db.session.commit()
-
         except:
             pass
     return -1
@@ -267,7 +265,7 @@ def handle_no_user_in_db(chat_id):
         db.session.add(user)
         db.session.commit()
         send_message_to_user(chat_id=chat_id,
-                             message="Привіт! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Листопад 2019\nДедлайн 14 жовтня о 21:00\nДля початку, напиши своє прізвище та ім'я: ")
+                             message="Привіт! Тебе вітає бот з закупівлі проїзних:)\nЗараз йде закупівля проїзних на Грудень 2019\nДедлайн 13 листопада о 23:55\nДля початку, напиши своє прізвище та ім'я: ")
     except:
         pass
 
